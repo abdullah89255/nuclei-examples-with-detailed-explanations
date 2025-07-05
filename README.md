@@ -163,4 +163,222 @@ subfinder -d example.com -silent | httpx -silent | nuclei -l -
 
 ---
 
-Would you like a list of **top templates** or help writing **custom Nuclei templates** for your targets?
+Great! Here's a **rich list of advanced and useful Nuclei examples**, categorized by use case, so you can get the most out of it during bug bounty, penetration testing, or red teaming.
+
+---
+
+## 🧩 CATEGORY-WISE NUCLEI EXAMPLES (WITH DETAILS)
+
+---
+
+### 🔐 1. **Authentication Issues**
+
+```bash
+nuclei -u https://target.com -t misconfiguration/basic-auth-detect.yaml
+```
+
+* Detects basic auth protection that may be bypassed or brute-forced.
+
+---
+
+### 💣 2. **RCE Vulnerability Detection**
+
+```bash
+nuclei -u https://target.com -t cves/2021/CVE-2021-41773.yaml
+```
+
+* Detects Apache HTTP Server RCE via path traversal.
+* Real-world exploit used in Apache 2.4.49.
+
+---
+
+### 🔍 3. **Detect JavaScript Exposures**
+
+```bash
+nuclei -u https://target.com -t expose-js/
+```
+
+* Detects exposed `.js` files that might contain secrets, API keys, or endpoints.
+
+---
+
+### 🕵️‍♂️ 4. **Information Disclosure**
+
+```bash
+nuclei -u https://target.com -t exposures/files/git-config.yaml
+```
+
+* Checks if `.git/config` is exposed — can leak repo history and internal code.
+
+```bash
+nuclei -u https://target.com -t exposures/files/env.yaml
+```
+
+* Checks if `.env` file is exposed — may contain credentials.
+
+---
+
+### 🧪 5. **SQL Injection Detection**
+
+```bash
+nuclei -u https://target.com/page.php?id=1 -t vulnerabilities/sql-injection/
+```
+
+* Scans for known SQLi payload responses.
+* Note: Passive detection only — doesn't exploit or use heavy payloads like sqlmap.
+
+---
+
+### 🎛️ 6. **Tech Stack Fingerprinting**
+
+```bash
+nuclei -u https://target.com -t technologies/
+```
+
+* Detects web frameworks, languages, platforms like WordPress, Apache, React, etc.
+
+---
+
+### 🔑 7. **JWT and Token Disclosure**
+
+```bash
+nuclei -u https://target.com -t tokens/jwt-token.yaml
+```
+
+* Finds JWT tokens in response headers or body.
+* Could be used for privilege escalation or replay attacks.
+
+---
+
+### 🧰 8. **CORS Misconfiguration**
+
+```bash
+nuclei -u https://target.com -t misconfiguration/cors-misconfig.yaml
+```
+
+* Looks for overly permissive CORS headers (e.g., `Access-Control-Allow-Origin: *`)
+* Dangerous for APIs with sensitive data.
+
+---
+
+### 🔁 9. **Chain Recon with Other Tools**
+
+```bash
+cat domains.txt | httpx -silent | nuclei -t cves/ -severity critical -o critical_findings.txt
+```
+
+* Combines `httpx` for live URL probing + nuclei for CVE scanning.
+
+---
+
+### 📑 10. **Scan for Common Sensitive Files**
+
+```bash
+nuclei -u https://target.com -t exposures/configs/
+```
+
+Includes:
+
+* `.env`
+* `config.php`
+* `web.config`
+* `wp-config.php`
+
+---
+
+### ⚠️ 11. **Detect Cloud Bucket Misconfiguration**
+
+```bash
+nuclei -u https://target.com -t cloud/
+```
+
+* Detects misconfigured S3, Azure, or GCP buckets.
+
+---
+
+### 🌐 12. **CVE Year Range Specific Scans**
+
+```bash
+nuclei -u https://target.com -t cves/2022/
+```
+
+* Focuses only on CVEs from 2022.
+
+---
+
+### 📊 13. **Scan for WordPress Vulnerabilities**
+
+```bash
+nuclei -u https://target.com -t vulnerabilities/wordpress/
+```
+
+* Checks plugins, themes, version disclosure, XML-RPC issues, etc.
+
+---
+
+### 🔍 14. **Favicon Hashing (Service Detection)**
+
+```bash
+nuclei -u https://target.com/favicon.ico -t fingerprints/favicon.yaml
+```
+
+* Uses favicon hash to detect technologies like Shodan does.
+
+---
+
+### 📁 15. **Find Backup Files (.bak, .zip, etc.)**
+
+```bash
+nuclei -u https://target.com -t exposures/backups/
+```
+
+* Detects `.zip`, `.bak`, `.tar.gz`, `.rar`, `.old`, etc.
+* Often leaks entire source code or database.
+
+---
+
+### 💾 16. **Scan with Specific Template Tags**
+
+```bash
+nuclei -u https://target.com -tags exposure,misconfig
+```
+
+* Use tag-based filtering instead of directories.
+* Useful for grouped scans.
+
+---
+
+## 🛠️ BONUS: Custom Scan Template Example
+
+Create your own template:
+
+```bash
+nano my-custom.yaml
+```
+
+```yaml
+id: custom-header-check
+info:
+  name: Check for X-Powered-By Header
+  severity: info
+requests:
+  - method: GET
+    path:
+      - "{{BaseURL}}"
+    matchers:
+      - type: regex
+        part: header
+        regex:
+          - "X-Powered-By:.*"
+```
+
+Run it:
+
+```bash
+nuclei -u https://target.com -t my-custom.yaml
+```
+
+---
+
+Would you like a **filtered list of top templates**, or instructions on how to **write automated scan scripts** using Nuclei + bash/Python?
+
