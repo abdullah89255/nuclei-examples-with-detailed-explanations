@@ -359,7 +359,112 @@ nano my-custom.yaml
 ```yaml
 id: custom-header-check
 info:
-  name: Check for X-Powered-By Header
+  name: Check for X-Powered-By HeaderTo **find out any CVE (Common Vulnerabilities and Exposures)** from **Nuclei templates**, you can use **filters, tags, or template paths** that reference CVE IDs. Here's a step-by-step guide:
+
+---
+
+### ✅ 1. **Using `tags` in `nuclei-templates`**
+
+Most CVE-related templates are tagged with `cve`, and often the actual CVE ID (e.g., `cve-2021-34527`).
+
+**Search for CVE-related templates:**
+
+```bash
+grep -ri 'tags:.*cve' ~/nuclei-templates/
+```
+
+Or, more specific:
+
+```bash
+grep -ri 'cve-2021' ~/nuclei-templates/
+```
+
+---
+
+### ✅ 2. **Nuclei CLI Filter by Tags**
+
+Nuclei supports filtering templates by tags like `cve`, `cve-2021`, etc.
+
+**Examples:**
+
+```bash
+nuclei -t cves/ -l urls.txt
+```
+
+Or for a specific CVE:
+
+```bash
+nuclei -t cves/2021/CVE-2021-34527.yaml -u https://target.com
+```
+
+Or using the `-tags` flag:
+
+```bash
+nuclei -tags cve -u https://target.com
+```
+
+---
+
+### ✅ 3. **Explore `cves/` Directory in Templates**
+
+If you have cloned the templates repo from GitHub:
+
+```bash
+cd ~/nuclei-templates/cves
+```
+
+You'll see folders organized by year, like:
+
+```
+2020/
+2021/
+2022/
+...
+```
+
+Inside each, you'll find `.yaml` files named after the CVEs.
+
+---
+
+### ✅ 4. **List CVE Templates with Description**
+
+You can list templates with their metadata using:
+
+```bash
+nuclei -tl | grep CVE
+```
+
+Or view specific templates:
+
+```bash
+cat ~/nuclei-templates/cves/2021/CVE-2021-34527.yaml
+```
+
+---
+
+### ✅ 5. **Search with `find` + `grep`**
+
+To search CVEs by year:
+
+```bash
+find ~/nuclei-templates/ -type f -name "*.yaml" | grep "CVE-2023"
+```
+
+---
+
+### ✅ Bonus: **Search Online**
+
+If you're looking for a specific CVE:
+
+* Check: [https://github.com/projectdiscovery/nuclei-templates](https://github.com/projectdiscovery/nuclei-templates)
+* Use GitHub search:
+  `repo:projectdiscovery/nuclei-templates CVE-2023-`
+  → To find templates matching that CVE year.
+
+---
+
+Would you like a Bash one-liner that lists **all CVEs available** in your local Nuclei templates?
+
   severity: info
 requests:
   - method: GET
@@ -377,6 +482,7 @@ Run it:
 ```bash
 nuclei -u https://target.com -t my-custom.yaml
 ```
+
 
 ---
 
